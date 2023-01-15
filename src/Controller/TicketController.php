@@ -6,6 +6,8 @@ use App\Entity\Event;
 use App\Entity\Ticket;
 use App\Entity\TypeTicket;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,12 +18,18 @@ class TicketController extends AbstractController
 {
 
     private $doctrine;
+    private $serializer;
+
     public function __construct(
-        ManagerRegistry $doctrine
+        ManagerRegistry $doctrine,SerializerInterface $serializer
         )
     {
         $this->doctrine = $doctrine;
+        $this->serializer = $serializer;
+
     }
+
+  
 
     #[Route('/ticket', name: 'app_ticket')]
     public function index(): Response
@@ -31,6 +39,66 @@ class TicketController extends AbstractController
         ]);
     }
 
+    #[Route('/scann', name: 'app_ticket_scann')]
+    public function scann(Request $request)
+    {
+        $message = "";
+
+		try {
+            $code = 200;
+			$error = false;
+        $entityManager = $this->doctrine->getManager();
+
+        $donnees = json_decode($request->getContent() ) ?? $_POST;
+        dump($donnees->codegenerer);
+ 
+
+        $event = $entityManager->getRepository(Ticket::class)->findby(['codesecret' => $donnees->codegenerer]);
+        if($event == null){
+            $message="Ticket introuvable";
+
+         }
+        foreach ($event as $key => $value) {
+            if($value->getStatutrentrer() == true){
+                $message="Ticket deja scanné";
+              }
+              else{
+                $value->setStatutrentrer(true);
+                $value->setDaterentrer(new \DateTime());
+                $entityManager->persist($value);
+                $entityManager->flush();
+                $message = "ticket scanné avec succes";
+              }
+             
+
+        }
+        
+      
+        
+
+       
+       
+     
+
+    } catch (Exception $ex) {
+        $code = 500;
+        $error = true;
+        $message = "une erreur est survenue lors du scann du ticket";
+    }
+    $retour = array ();
+    $retour['statutticket'] = $event[0]->getStatutrentrer();
+    $retour['daterentrer'] = $event[0]->getDaterentrer();
+    $retour['message'] = $message;
+
+    $response = [
+        'code' => $code,
+        'error' => $error,
+        'data' => $code == 200 ? $retour: $message    ,
+    ];
+     return new Response($this->serializer->serialize($response, "json"));
+
+
+} 
  
     #[Route('/generate/ticket/event/{idevent}', name: 'generateticketbyeventandnumber')]
     public function generateticketbyeventandnumber(Request $request,$idevent): Response
@@ -38,7 +106,7 @@ class TicketController extends AbstractController
         $entityManager = $this->doctrine->getManager();
 
         $event = $entityManager->getRepository(Event::class)->find(intval($idevent));
-     // dump($typeticket->getNombretotal());
+    
  foreach ($event->getTypeTickets() as $key => $value) {
       for ($i=0; $i < $value->getNombretotal() ; $i++) { 
         
@@ -69,7 +137,7 @@ class TicketController extends AbstractController
         //$article->setTicket($ticket);
    
         // On retourne la confirmation
-        return new Response('ok', 201);
+        return new Response('ticket generer', 201);
         
     }
 

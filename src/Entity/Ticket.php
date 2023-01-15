@@ -37,6 +37,12 @@ class Ticket
     #[ORM\ManyToOne(inversedBy: 'ticket')]
     private ?Event $event = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $statutrentrer = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $daterentrer = null;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -125,6 +131,36 @@ class Ticket
     public function setEvent(?Event $event): self
     {
         $this->event = $event;
+
+        return $this;
+    }
+
+    public function isStatutrentrer(): ?bool
+    {
+        return $this->statutrentrer;
+    }
+
+    public function setStatutrentrer(?bool $statutrentrer): self
+    {
+        $this->statutrentrer = $statutrentrer;
+
+        return $this;
+    }
+
+    public function getStatutrentrer(): bool
+    {
+ 
+        return $this->statutrentrer;
+    }
+
+    public function getDaterentrer(): ?\DateTimeInterface
+    {
+        return $this->daterentrer;
+    }
+
+    public function setDaterentrer(?\DateTimeInterface $daterentrer): self
+    {
+        $this->daterentrer = $daterentrer;
 
         return $this;
     }

@@ -52,7 +52,6 @@ class Event
     private ?TypeTicket $typeTicket = null;
 
     #[ORM\OneToMany(mappedBy: 'typeticketperconcert', targetEntity: TypeTicket::class)]
-    
     private Collection $typeTickets;
 
     public function __construct()

@@ -50,10 +50,10 @@ class TicketController extends AbstractController
         $entityManager = $this->doctrine->getManager();
 
         $donnees = json_decode($request->getContent() ) ?? $_POST;
-        dump($donnees->codegenerer);
+        dump($donnees->codesecret);
  
 
-        $event = $entityManager->getRepository(Ticket::class)->findby(['codesecret' => $donnees->codegenerer]);
+        $event = $entityManager->getRepository(Ticket::class)->findby(['codesecret' => $donnees->codesecret]);
         if($event == null){
             $message="Ticket introuvable";
 
@@ -118,6 +118,7 @@ class TicketController extends AbstractController
         $ticket->setPrice($value->getPrice());
         $ticket->setCodesecret($event->getCodeevent().''.$this->GenerateNumberToken());
         $ticket->setCodevisuel($i+1);
+        $ticket->setStatutrentrer(true);
         $ticket->setDategeneration(new \DateTime());
         $ticket->setTypeticket($value);
         $entityManager->persist($ticket);

@@ -33,8 +33,9 @@ class EventController extends AbstractController
     public function liste(EventRepository $articlesRepo)
     {
         // On récupère la liste des articles
-        $articles = $articlesRepo->findAll();
+        $articles = $articlesRepo->apiFindAll();
     
+        
         // On spécifie qu'on utilise l'encodeur JSON
         $encoders = [new JsonEncoder()];
     
@@ -45,14 +46,21 @@ class EventController extends AbstractController
         $serializer = new Serializer($normalizers, $encoders);
     
         // On convertit en json
-        
-        $retour = array ();
-        $retour['status'] = "success";
-        $retour['message'] = "ok";
-        $retour['data'] = $articles;
-        $response = new Response(json_encode($retour));
+        $jsonContent = $serializer->serialize($articles, 'json', [
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
+        ]);
+    
+        // On instancie la réponse
+        $response = new Response($jsonContent);
+    
+        // On ajoute l'entête HTTP
         $response->headers->set('Content-Type', 'application/json');
+    
+        // On envoie la réponse
         return $response;
+        
     }
 
 

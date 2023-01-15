@@ -39,20 +39,18 @@ class EventRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Event[] Returns an array of Event objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('e')
-//            ->andWhere('e.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('e.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+ 
+   /**
+     * @return Event[] Returns an array of Event objects
+     */
+    public function apiFindAll(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->select('e.designation', 'e.description', 'e.statutevent', 'e.image', 'e.codeevent','e.dateCreation',)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 
 //    public function findOneBySomeField($value): ?Event
 //    {

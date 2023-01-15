@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Exclude;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 class Event
@@ -17,6 +18,7 @@ class Event
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    
     private ?string $designation = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -50,6 +52,7 @@ class Event
     private ?TypeTicket $typeTicket = null;
 
     #[ORM\OneToMany(mappedBy: 'typeticketperconcert', targetEntity: TypeTicket::class)]
+    
     private Collection $typeTickets;
 
     public function __construct()

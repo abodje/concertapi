@@ -45,22 +45,24 @@ class TicketController extends AbstractController
         $message = "";
 
 		try {
-            $code = 200;
-			$error = false;
+            $code = "";
+            $error = "";
         $entityManager = $this->doctrine->getManager();
 
         $donnees = json_decode($request->getContent() ) ?? $_POST;
-        dump($donnees->codesecret);
- 
+  
 
         $event = $entityManager->getRepository(Ticket::class)->findby(['codesecret' => $donnees->codesecret]);
         if($event == null){
             $message="Ticket introuvable";
-
+            $code = 500;
+            $error = true;
          }
         foreach ($event as $key => $value) {
             if($value->getStatutrentrer() == true){
                 $message="Ticket deja scanné";
+                $code = 500;
+                $error = true;
               }
               else{
                 $value->setStatutrentrer(true);
@@ -68,6 +70,8 @@ class TicketController extends AbstractController
                 $entityManager->persist($value);
                 $entityManager->flush();
                 $message = "ticket scanné avec succes";
+                $code = 200;
+                $error = false;
               }
              
 
@@ -86,8 +90,8 @@ class TicketController extends AbstractController
         $message = "une erreur est survenue lors du scann du ticket";
     }
     $retour = array ();
-    $retour['statutticket'] = $event[0]->getStatutrentrer();
-    $retour['daterentrer'] = $event[0]->getDaterentrer();
+    $retour['statutticket'] = ($event==null) ?"aucun ticket" : $event[0]->getStatutrentrer();
+    $retour['daterentrer'] = ($event==null) ?"aucun ticket" : $event[0]->getDaterentrer();
     $retour['message'] = $message;
 
     $response = [

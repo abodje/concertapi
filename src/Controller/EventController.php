@@ -16,7 +16,7 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 #[Route('/api/event', name: 'api_event')]
 class EventController extends AbstractController
@@ -35,25 +35,10 @@ class EventController extends AbstractController
         // On récupère la liste des articles
         $articles = $articlesRepo->apiFindAll();
     
-        
-        // On spécifie qu'on utilise l'encodeur JSON
-        $encoders = [new JsonEncoder()];
-    
-        // On instancie le "normaliseur" pour convertir la collection en tableau
-        $normalizers = [new ObjectNormalizer()];
-    
-        // On instancie le convertisseur
-        $serializer = new Serializer($normalizers, $encoders);
-    
-        // On convertit en json
-        $jsonContent = $serializer->serialize($articles, 'json', [
-            'circular_reference_handler' => function ($object) {
-                return $object->getId();
-            }
-        ]);
+       
     
         // On instancie la réponse
-        $response = new Response($jsonContent);
+        $response = new JsonResponse($articles);
     
         // On ajoute l'entête HTTP
         $response->headers->set('Content-Type', 'application/json');
@@ -63,6 +48,26 @@ class EventController extends AbstractController
         
     }
 
+
+    #[Route('/listetypeticketbyevent/{id}', name: 'app_event_listetypeticketbyevent')]
+    public function listetypeticketbyevent(EventRepository $articlesRepo,$id)
+    {
+        // On récupère la liste des articles
+        $articles = $articlesRepo->gettypeticketbyevent($id);
+        
+    
+       //$listeevent = $articles->getTypeTickets();
+    
+        // On instancie la réponse
+        $response = new JsonResponse($articles);
+    
+        // On ajoute l'entête HTTP
+        $response->headers->set('Content-Type', 'application/json');
+    
+        // On envoie la réponse
+        return $response;
+        
+    }
 
     #[Route('/ajouter', name: 'app_event_ajouter', methods: ['POST'])]
     public function addEvent(Request $request,FileUploader $fileUploader)
@@ -99,6 +104,7 @@ class EventController extends AbstractController
         return new Response('ok', 201);
     
 }
+
 
 public function upload_files($folder, $file, FileUploader $fileUploader) {
     $ds = DIRECTORY_SEPARATOR;

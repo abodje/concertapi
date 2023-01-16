@@ -52,6 +52,18 @@ class EventRepository extends ServiceEntityRepository
         ;
     }
 
+    public function gettypeticketbyevent($value): array
+    {
+        return $this->createQueryBuilder('e')
+            ->select('e.id as idevent','w.id as idtypeticket', 'w.designation as designationtypeticket', 'w.description as descriptiontypeticket', 'w.price as pricetypeticket', 'w.statutticket as statuttypeticket ','w.nombretotal as nombretotaltypeticket')
+            ->innerJoin('e.typeTickets','w')
+            ->andWhere('e.id = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 //    public function findOneBySomeField($value): ?Event
 //    {
 //        return $this->createQueryBuilder('e')

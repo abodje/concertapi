@@ -39,6 +39,16 @@ class TypeTicketRepository extends ServiceEntityRepository
         }
     }
 
+
+    public function apiFindAll(): array
+    {
+        return $this->createQueryBuilder('t')
+            ->select('t.id as idtypeticket', 't.designation as designationtypeticket', 't.description as descriptiontypeticket', 't.price as pricetypeticket', 't.statutticket as statuttypeticket ','t.nombretotal as nombretotaltypeticket','w.id as idevent','w.designation as designationevent','w.description as descriptionevent','w.statutevent as statutevent','w.image as imageevent','w.codeevent as codeevent','w.dateCreation as dateCreationevent')
+            ->innerJoin('t.typeticketperconcert','w')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 //    /**
 //     * @return TypeTicket[] Returns an array of TypeTicket objects
 //     */

@@ -122,7 +122,7 @@ class TicketController extends AbstractController
         $ticket->setPrice($value->getPrice());
         $ticket->setCodesecret($event->getCodeevent().''.$this->GenerateNumberToken());
         $ticket->setCodevisuel($i+1);
-        $ticket->setStatutrentrer(true);
+        $ticket->setStatutrentrer(false);
         $ticket->setDategeneration(new \DateTime());
         $ticket->setTypeticket($value);
         $entityManager->persist($ticket);

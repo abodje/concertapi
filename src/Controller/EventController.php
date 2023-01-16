@@ -60,10 +60,6 @@ class EventController extends AbstractController
     {
         // On récupère la liste des articles
         $articles = $articlesRepo->gettypeticketbyevent($id);
-        
-    
-       //$listeevent = $articles->getTypeTickets();
-    
         // On instancie la réponse
         $response = [
             'code' => 200,
@@ -71,7 +67,6 @@ class EventController extends AbstractController
             'data' => $articles    ,
         ];
          return new Response($this->serializer->serialize($response, "json"));
-        
     }
 
     #[Route('/ajouter', name: 'app_event_ajouter', methods: ['POST'])]

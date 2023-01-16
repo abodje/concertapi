@@ -39,6 +39,19 @@ class TicketRepository extends ServiceEntityRepository
         }
     }
 
+    public function apiFindAllByEvent($id): array
+    {
+        return $this->createQueryBuilder('t')
+            ->select('t.id', 't.codesecret', 't.codevisuel', 't.dategeneration', 't.price', 't.statutrentrer', 't.daterentrer', 'e.id as idevent', 'tt.id as typeticket_id')
+            ->innerJoin('t.event','e')
+            ->innerJoin('t.typeticket','tt')
+            ->andWhere('t.event = :val')
+            ->setParameter('val', $id)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 //    /**
 //     * @return Ticket[] Returns an array of Ticket objects
 //     */

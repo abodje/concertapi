@@ -71,7 +71,8 @@ class TickettypeController extends AbstractController
         $article = new TypeTicket();
 
         // On décode les données envoyées
-        $donnees = json_decode($request->getContent() ) ?? $_POST;
+        $donnees = json_decode($request->getContent(), true) ?? $_POST;
+        $donnees = (object)$donnees;
         $idevent  = $donnees->idevent;
         $user = $this->doctrine->getRepository(Event::class)->findOneBy(["id" => intval($idevent)]);
         $article->setDesignation($donnees->designation);
@@ -80,11 +81,6 @@ class TickettypeController extends AbstractController
         $article->setStatutticket(true);
         $article->setNombretotal($donnees->nombretotal);
         $article->setTypeticketperconcert($user);
-
-
-        
-
- 
         // On sauvegarde en base
         $entityManager = $this->doctrine->getManager();
         $entityManager->persist($article);

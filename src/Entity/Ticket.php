@@ -43,6 +43,9 @@ class Ticket
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $daterentrer = null;
 
+    #[ORM\ManyToOne(inversedBy: 'tickets')]
+    private ?User $userquiabadger = null;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -161,6 +164,18 @@ class Ticket
     public function setDaterentrer(?\DateTimeInterface $daterentrer): self
     {
         $this->daterentrer = $daterentrer;
+
+        return $this;
+    }
+
+    public function getUserquiabadger(): ?User
+    {
+        return $this->userquiabadger;
+    }
+
+    public function setUserquiabadger(?User $userquiabadger): self
+    {
+        $this->userquiabadger = $userquiabadger;
 
         return $this;
     }

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Event;
 use App\Entity\Ticket;
 use App\Entity\TypeTicket;
+use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -55,6 +56,9 @@ class TicketController extends AbstractController
 
 
             $event = $entityManager->getRepository(Ticket::class)->findby(['codesecret' => $donnees->codesecret]);
+            $userid = $entityManager->getRepository(User::class)->find(intval($this->getUser()->getId()));
+            
+              
             if ($event == null) {
                 $message = "Ticket introuvable";
                 $code = 500;
@@ -68,6 +72,7 @@ class TicketController extends AbstractController
                 } else {
                     $value->setStatutrentrer(true);
                     $value->setDaterentrer(new \DateTime());
+                    $value->setUserquiabadger($userid);
                     $entityManager->persist($value);
                     $entityManager->flush();
                     $message = "ticket scanné avec succes";

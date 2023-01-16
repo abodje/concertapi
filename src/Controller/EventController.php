@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -21,14 +22,18 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 #[Route('/api/event', name: 'api_event')]
 class EventController extends AbstractController
 {
-
     private $doctrine;
+    private $serializer;
+
     public function __construct(
-        ManagerRegistry $doctrine
+        ManagerRegistry $doctrine,SerializerInterface $serializer
         )
     {
         $this->doctrine = $doctrine;
+        $this->serializer = $serializer;
+
     }
+   
     #[Route('/liste', name: 'app_event')]
     public function liste(EventRepository $articlesRepo)
     {
@@ -38,13 +43,14 @@ class EventController extends AbstractController
        
     
         // On instancie la réponse
-        $response = new JsonResponse($articles);
-    
-        // On ajoute l'entête HTTP
-        $response->headers->set('Content-Type', 'application/json');
-    
-        // On envoie la réponse
-        return $response;
+      
+
+        $response = [
+            'code' => 200,
+            'error' => false,
+            'data' => $articles    ,
+        ];
+         return new Response($this->serializer->serialize($response, "json"));
         
     }
 
@@ -59,13 +65,12 @@ class EventController extends AbstractController
        //$listeevent = $articles->getTypeTickets();
     
         // On instancie la réponse
-        $response = new JsonResponse($articles);
-    
-        // On ajoute l'entête HTTP
-        $response->headers->set('Content-Type', 'application/json');
-    
-        // On envoie la réponse
-        return $response;
+        $response = [
+            'code' => 200,
+            'error' => false,
+            'data' => $articles    ,
+        ];
+         return new Response($this->serializer->serialize($response, "json"));
         
     }
 
@@ -101,7 +106,13 @@ class EventController extends AbstractController
         $entityManager->flush();
 
         // On retourne la confirmation
-        return new Response('ok', 201);
+ 
+        $response = [
+            'code' => 200,
+            'error' => false,
+            'data' => $article->getId()    ,
+        ];
+         return new Response($this->serializer->serialize($response, "json"));
     
 }
 

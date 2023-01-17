@@ -88,6 +88,8 @@ class TicketController extends AbstractController
         $retour = array();
         $retour['statutticket'] = ($event == null) ? "aucun ticket" : $event[0]->getStatutrentrer();
         $retour['daterentrer'] = ($event == null) ? "aucun ticket" : $event[0]->getDaterentrer();
+        $retour['price'] = ($event == null) ? "aucun ticket" : $event[0]->getPrice();
+        $retour['codevisuel'] = ($event == null) ? "aucun ticket" : $event[0]->getCodevisuel();
         $retour['message'] = $message;
 
         $response = [
